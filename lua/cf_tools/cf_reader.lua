@@ -90,6 +90,82 @@ local function NewStringReader(s)
     }
 end
 
+local function NewStructReader(s, beg)
+    beg = beg or 1
+    local pos = s:find('{', beg, true)
+    if not pos then return nil end
+    local leaf = {}
+    local function newleaf(b, e)
+        leaf[#leaf+1] = b
+        leaf[#leaf+1] = e
+        return #leaf
+    end
+    local qt, lb, rb = ('"{}'):byte(1,3)
+    local skip, b = false, 0
+    local function parse()     
+        beg = pos + 1
+        pos = s:find('["{},]', pos + 1)
+        local tree = {}
+        while pos do
+            b = s:byte(pos)
+            if b == qt then
+                skip = not skip
+            elseif not skip then
+                if b == lb then
+                    tree[#tree+1] = assert(parse())
+                    pos = pos + 1
+                    beg = pos + 1
+                elseif b == rb then
+                    if beg < pos then
+                        tree[#tree+1] = newleaf(beg, pos - 1)
+                    end
+                    return tree
+                else -- ','
+                    tree[#tree+1] = newleaf(beg, pos - 1)
+                    beg = pos + 1
+                end
+            end
+            pos = s:find('["{},]', pos + 1)
+        end
+        return nil
+    end
+    local tree = parse()
+    local node = tree
+    local function get(n, t)
+        local i, c = 0, #t
+        while n and (i < c) do
+            i = i + 1
+            n = n[t[i]]
+        end
+        return n, i
+    end
+    local function goto(key, ...)
+        local n, p
+        if key == 0 then -- go to root
+            n, p = get(tree, {...})
+        else
+            n, p = get(node[key], {...})
+        end
+        if n then
+            node = n
+        else
+            return false, p + 1
+        end 
+        return true, 0
+    end
+    local function read(...)
+        local n, p = get(node, {...})
+        if type(n) == 'number' then 
+            return s:sub(leaf[n - 1], leaf[n]), 0
+        end
+        return nil, p
+    end
+    return {
+        goto = goto,
+        read = read
+    }
+end
+
 local function GetUInt32(b0, b1, b2, b3)
     return b3 * 256^3 + b2 * 256^2 + b1 * 256 + b0
 end
@@ -204,5 +280,6 @@ end
 return {
     NewFileReader = NewFileReader,
     NewStringReader = NewStringReader,
+    NewStructReader = NewStructReader,
     ReadImage = ReadImage
 }
