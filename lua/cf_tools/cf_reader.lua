@@ -270,7 +270,7 @@ local function ReadImage(rd)
                     rd.setpos(Pointers[index + 1])
                     Body = ReadRowBody(rd)
                     index = index + 3
-                    return ID, Body, Header, Body:sub(1, 3) ~= BOM
+                    return ID, Body, Body:sub(1, 3) ~= BOM, Header
                 end
             end
         end

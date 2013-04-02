@@ -89,7 +89,7 @@ local function UnpackTo(path, rd)
     local Image = cf.ReadImage(rd)
     local ret, res, dir
 
-    for ID, Body, Header, Packed in Image.Rows() do
+    for ID, Body, Packed in Image.Rows() do
         if Packed then
             ret, res = inflate(Body)
             if ret == zlib.Z_OK then
