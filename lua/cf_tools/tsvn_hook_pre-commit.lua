@@ -65,7 +65,7 @@ local dir = {}
 for path in io.lines(arg[1] or "c:/temp/test.txt") do
    
     local fdir, fnam, fext = parse_path(path)
-    if check[fext:lower()] then
+    if check[fext:lower()] and lfs.attributes(path, "mode") then
         
         local Image = cf.ReadImage(cf.NewFileReader(assert(io.open(path, "rb"))))
         local ret, res
