@@ -10,7 +10,7 @@ local function NewFileReader(file, buflen)
     buflen = buflen or 256 * 1024
     local offset = 0
     local fpos   = 0
-    local flen  = file:seek("end")
+    local flen   = file:seek("end")
     file:seek("set")
     if flen < buflen then buflen = flen end
     local buffer = file:read(buflen)
@@ -62,7 +62,7 @@ end
 
 local function NewStringReader(s)
     local slen = #s
-    local spos  = 0
+    local spos = 0
 
     local function pos()  return spos  end
     local function size() return slen end

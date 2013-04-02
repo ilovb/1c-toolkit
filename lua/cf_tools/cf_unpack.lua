@@ -1,8 +1,5 @@
 local ffi = require("ffi")
-ffi.cdef[[
-int _mkdir(const char* pathname);
-]]
-local C = ffi.C
+local lfs = require "lfs"
 
 require 'zlib_h'
 local zlib = ffi.load(ffi.os == "Windows" and "bin/zlib1" or "z")
@@ -95,7 +92,7 @@ local function UnpackTo(path, rd)
             if ret == zlib.Z_OK then
                 if res:sub(1, 4) == SIG then
                     dir = path .. ID .. "/"
-                    C._mkdir(dir)
+                    lfs.mkdir(dir)
                     UnpackTo(dir, cf.NewStringReader(res))
                 else
                     write(path .. ID, res)
@@ -113,5 +110,5 @@ end
 
 local file = assert(io.open(arg[1] or "c:/1C/1Cv8.cf", "rb"))
 local dir = arg[2] or "c:/1C/1Cv8_cf/"
-C._mkdir(dir)
+lfs.mkdir(dir)
 UnpackTo(dir, cf.NewFileReader(file))

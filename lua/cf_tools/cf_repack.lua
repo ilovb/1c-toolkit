@@ -1,8 +1,4 @@
 local ffi = require("ffi")
-ffi.cdef[[
-int remove(const char* filename);
-]]
-local C = ffi.C
 
 require 'miniz_h'
 local miniz = ffi.load("bin/miniz")
@@ -26,7 +22,7 @@ local function NewZipWriter(fpath)
     function write(dpath, data, level)
         if miniz.mz_zip_writer_add_mem(zip, dpath, data, #data, level) == miniz.MZ_FALSE then
             mz_zip_writer_end(zip)
-            C.remove(fpath)
+            os.remove(fpath)
             return false
         end
         return true
@@ -35,7 +31,7 @@ local function NewZipWriter(fpath)
     function finalize()
         if miniz.mz_zip_writer_finalize_archive(zip) == miniz.MZ_FALSE then
             miniz.mz_zip_writer_end(zip)
-            C.remove(fpath)
+            os.remove(fpath)
             return false
         end  
         miniz.mz_zip_writer_end(zip)  
