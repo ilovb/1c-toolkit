@@ -7,7 +7,7 @@ local C = ffi.C
 require 'miniz_h'
 local miniz = ffi.load("bin/miniz")
 
-local cf = require 'cf_reader'
+local cf = require 'cf_tools.cf_reader'
 
 local function inflate(source)
     local decomp_len = ffi.new 'size_t[1]'

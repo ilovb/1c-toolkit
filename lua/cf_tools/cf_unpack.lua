@@ -7,7 +7,7 @@ local C = ffi.C
 require 'zlib_h'
 local zlib = ffi.load(ffi.os == "Windows" and "bin/zlib1" or "z")
 
-local cf = require 'cf_reader'
+local cf = require 'cf_tools.cf_reader'
 
 local zlib_version = ffi.string(zlib.zlibVersion())
 local zerr = {
