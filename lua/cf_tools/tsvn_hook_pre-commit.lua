@@ -58,7 +58,10 @@ conv2ansi = NewConverter('CP1251', 'UTF-8')
 
 local SIG = string.char( 0xFF, 0xFF, 0xFF, 0x7F )
 local BOM = string.char( 0xEF, 0xBB, 0xBF )
-local tform = 'd5b0e5ed-256d-401c-9c36-f630cafd8a62'
+local tform = {
+    ['d5b0e5ed-256d-401c-9c36-f630cafd8a62'] = true,
+    ['a3b368c0-29e2-11d6-a3c7-0050bae0a776'] = true
+}
 
 local dir = {}
 
@@ -119,7 +122,7 @@ for path in io.lines(arg[1] or "c:/temp/test.txt") do
         root_body.goto(4, 2)
         for i = 4, assert(root_body.read(3)) + 3 do
             -- ищем список форм
-            if assert(root_body.read(i, 1)) == tform then
+            if tform[assert(root_body.read(i, 1))] then
                 root_body.goto(i)
                 for j = 3, assert(root_body.read(2)) + 2 do
                     form_uuid = assert(root_body.read(j))
