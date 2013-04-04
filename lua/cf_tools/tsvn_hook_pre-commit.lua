@@ -54,7 +54,7 @@ local check = {
     ["erf"] = true
 }
 
-conv2ansi = NewConverter('CP1251', 'UTF-8')
+local conv2ansi = NewConverter('CP1251', 'UTF-8')
 
 local SIG = string.char( 0xFF, 0xFF, 0xFF, 0x7F )
 local BOM = string.char( 0xEF, 0xBB, 0xBF )

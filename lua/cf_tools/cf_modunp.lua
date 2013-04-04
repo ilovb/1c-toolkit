@@ -39,7 +39,7 @@ if src and dst then
     local dir = dst:sub(-1) == '/' and dst or dst..'/'
     lfs.mkdir(dir)
 
-    conv2ansi = NewConverter('CP1251', 'UTF-8')
+    local conv2ansi = NewConverter('CP1251', 'UTF-8')
 
     local list = cf_inside.ReadModulesFromFile(src)
     local fname
