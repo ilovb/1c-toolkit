@@ -45,7 +45,7 @@ if src and dst then
     local fname
     for _, item in ipairs(list) do
         fname = conv2ansi(item.mod_type == 'object' and 'МодульОбъекта' or item.mod_name)
-        write(dir..fname, item.mod_text)
+        write(dir..fname..'.txt', item.mod_text)
     end
 
 end
