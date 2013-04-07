@@ -82,7 +82,7 @@ local function write(path, data)
 end
 
 local function UnpackTo(path, rd)
-    
+
     local Image = cf.ReadImage(rd)
     local ret, res, dir
 
@@ -107,8 +107,8 @@ local function UnpackTo(path, rd)
 
 end
 
-
 local file = assert(io.open(arg[1] or "c:/1C/1Cv8.cf", "rb"))
 local dir = arg[2] or "c:/1C/1Cv8_cf/"
+dir = dir:sub(-1) == '/' and dir or dir..'/'
 lfs.mkdir(dir)
 UnpackTo(dir, cf.NewFileReader(file))
