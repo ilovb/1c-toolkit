@@ -22,9 +22,13 @@
 файлы для скачивания:
 
 * 1c-toolkit [версия 0.1.3](https://bitbucket.org/boris_coder/1c-toolkit/get/0.1.3.zip)
+	* [1c-toolkit\_v0.1.3\_win\_x86.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.3_win_x86.exe)
+	* [1c-toolkit\_v0.1.3\_win\_x64.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.3_win_x64.exe)
 * компилятор LuaJIT:
-	* [LuaJIT 2.0.1 with Hotfix#1 / win / x86 / built with Windows SDK 8 / includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x86.zip)
-	* [LuaJIT 2.0.1 with Hotfix#1 / win / x64 / built with Windows SDK 8 / includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x64.zip)
+	* [LuaJIT 2.0.1 with Hotfix#1 / win / x86 / built with Windows SDK 8 /  
+	includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x86.zip)
+	* [LuaJIT 2.0.1 with Hotfix#1 / win / x64 / built with Windows SDK 8 /  
+	includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x64.zip)
 * бинарные модули (lfs.dll):
 	* [clibs\_win\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/clibs_win_x86.zip)
 	* [clibs\_win\_x64.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/clibs_win_x64.zip)
