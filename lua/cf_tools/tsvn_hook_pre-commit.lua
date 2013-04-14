@@ -1,8 +1,5 @@
 local ffi = require("ffi")
 
-require 'tinfl_h'
-local tinfl = ffi.load("bin/tinfl")
-
 local iconv = require 'iconv'
 
 local lfs = require "lfs"
