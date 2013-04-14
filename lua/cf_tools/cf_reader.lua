@@ -172,7 +172,7 @@ end
 
 local function ReadImageHeader(rd)
     local s = rd.read(ImageHeaderLen)
-    assert(GetUInt32(s:byte(1, 4)) == SIG)
+    -- assert(GetUInt32(s:byte(1, 4)) == SIG)
     return {
         PageSize  = GetUInt32(s:byte(5,  8)),
         Revision  = GetUInt32(s:byte(9, 12)),
