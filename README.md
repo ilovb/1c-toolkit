@@ -18,6 +18,7 @@
 - [Распаковка CF на Lua](http://infostart.ru/public/178201/)
 - [Клиентский хук для TortoiseSVN](http://infostart.ru/public/181018/)
 - [Альтернативное сравнение конфигураций](http://infostart.ru/public/165529/)
+- [Утилита для просмотра модулей обработок и отчетов](http://infostart.ru/public/183149/)
 
 ----------
 файлы для скачивания:
