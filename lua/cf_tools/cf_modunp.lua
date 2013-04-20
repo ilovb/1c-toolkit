@@ -19,12 +19,12 @@ if src and dst then
     local dir = dst:sub(-1) == '/' and dst or dst..'/'
     lfs.mkdir(dir)
 
-    local conv2ansi = iconv.NewConverter('CP1251', 'UTF-8')
+    local utf8_to_cp1251 = iconv.new('CP1251', 'UTF-8')
 
     local list = cf_inside.ReadModulesFromFile(src)
     local fname
     for _, item in ipairs(list) do
-        fname = conv2ansi(item.mod_type == 'object' and 'МодульОбъекта' or item.mod_name)
+        fname = utf8_to_cp1251:iconv(item.mod_type == 'object' and 'МодульОбъекта' or item.mod_name)
         write(dir..fname..'.txt', item.mod_text)
     end
 

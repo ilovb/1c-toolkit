@@ -28,7 +28,7 @@ end
 
 local check = NewSet {"epf", "erf"}
 
-local conv2ansi = iconv.NewConverter('CP1251', 'UTF-8')
+local utf8_to_cp1251 = iconv.new('CP1251', 'UTF-8')
 
 for path in io.lines(arg[1] or "c:/temp/test.txt") do
 
@@ -38,7 +38,7 @@ for path in io.lines(arg[1] or "c:/temp/test.txt") do
         local list = cf_inside.ReadModulesFromFile(path)
         local mod_name
         for _, item in ipairs(list) do
-            mod_name = conv2ansi(item.mod_type == 'object' and 'Модуль' or item.mod_name)
+            mod_name = utf8_to_cp1251:iconv(item.mod_type == 'object' and 'Модуль' or item.mod_name)
             write(fdir..fnam..'_'..mod_name..'.txt', item.mod_text)
         end
 

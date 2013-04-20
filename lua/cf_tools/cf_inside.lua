@@ -3,14 +3,14 @@ ffi.cdef [[
 void free(void *ptr);
 ]]
 
-require 'tinfl_h'
-local tinfl = ffi.load("bin/tinfl")
+require 'miniz_h'
+local miniz = ffi.load("bin/miniz")
 
 local cf = require 'cf_tools.cf_reader'
 
 local function inflate(source)
     local decomp_len = ffi.new 'size_t[1]'
-    local pdata = ffi.gc(tinfl.tinfl_decompress_mem_to_heap(source, #source, decomp_len, 0), ffi.C.free)
+    local pdata = ffi.gc(miniz.tinfl_decompress_mem_to_heap(source, #source, decomp_len, 0), ffi.C.free)
     return pdata ~= ffi.NULL, ffi.string(pdata, ffi.cast("int", decomp_len[0])) 
 end
 

@@ -3,7 +3,7 @@ local lfs = require 'lfs'
 local cf_inside = require 'cf_tools.cf_inside'
 require 'iuplua'
 
-local conv2ansi = iconv.NewConverter('CP1251', 'UTF-8')
+local utf8_to_cp1251 = iconv.new('CP1251', 'UTF-8')
 
 local window = {}
 
@@ -32,9 +32,9 @@ function window:OpenFile(filename)
     self.modules = {}
     self.list[1] = nil
     for i, v in ipairs(list) do
-        mod_name = conv2ansi(v.mod_type == 'object' and 'МодульОбъекта' or v.mod_name)
+        mod_name = utf8_to_cp1251:iconv(v.mod_type == 'object' and 'МодульОбъекта' or v.mod_name)
         self.list[i] = mod_name    
-        self.modules[i] = conv2ansi(v.mod_text:sub(4))
+        self.modules[i] = utf8_to_cp1251:iconv(v.mod_text:sub(4))
     end
     self.text.value = self.modules[1]
     self.list.value = 1
