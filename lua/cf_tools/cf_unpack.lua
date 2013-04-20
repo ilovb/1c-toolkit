@@ -5,7 +5,7 @@ void free(void *ptr);
 ]]
 
 require 'miniz_h'
-local miniz = ffi.load("bin/miniz")
+local miniz = ffi.load("miniz")
 
 local cf = require 'cf_tools.cf_reader'
 
