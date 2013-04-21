@@ -1,7 +1,7 @@
 **1c-toolkit** - это коллекция различных полезных скриптов на языке [Lua](http://ru.wikipedia.org/wiki/Lua) для работы с файлами платформы [1С:Предприятие 8](http://v8.1c.ru/overview/)
 
 ----------
-состав версии 0.1.5:
+состав версии 0.1.6:
 
 - **cf\_reader.lua** - модуль для чтения [файлов конфигураций 1С](http://www.richmedia.us/post/2011/01/18/cf-file-format-1c-8-compatible.aspx) (cf, epf, erf)
 - **cf\_inside.lua** - модуль для работы с содержимым файлов конфигураций
@@ -23,9 +23,9 @@
 ----------
 файлы для скачивания:
 
-* 1c-toolkit [версия 0.1.5](https://bitbucket.org/boris_coder/1c-toolkit/get/0.1.5.zip)
-	* [1c-toolkit\_v0.1.5\_win\_x86.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.5_win_x86.exe)
-	* [1c-toolkit\_v0.1.5\_win\_x64.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.5_win_x64.exe)
+* 1c-toolkit [версия 0.1.6](https://bitbucket.org/boris_coder/1c-toolkit/get/0.1.6.zip)
+	* [1c-toolkit\_v0.1.6\_win\_x86.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.6_win_x86.exe)
+	* [1c-toolkit\_v0.1.6\_win\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.6_win_x86.zip)
 * компилятор LuaJIT:
 	* [LuaJIT 2.0.1 with Hotfix#1 / win / x86 / built with Windows SDK 8 /  
 	includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x86.zip)
