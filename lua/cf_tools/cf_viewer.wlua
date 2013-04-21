@@ -20,6 +20,7 @@ window.modules = {}
 function window.list:action(t, i, v)
     if v ~= 0 then 
         window.text.value = window.modules[i]
+        window.caretpos = 1
     end
     return iup.default
 end
@@ -32,15 +33,34 @@ window.text = iup.multiline {
     padding  = '10x0', -- formatting = 'yes'
 }
 
+    window.caretpos = 1
+
+function window.text:caret_cb(lin, col, pos)
+    window.caretpos = pos
+end
+
 window.button_open = iup.button {
-    size = "60x15",
+    size = "60x13",
     title = utf8_to_cp1251:iconv "Открыть"
 }
 
 window.button_store = iup.button {
-    size = "60x15",
+    size = "70x13",
     title = utf8_to_cp1251:iconv "Сохранить как" 
 }
+
+window.button_find = iup.button {
+    size = "40x13",
+    title = utf8_to_cp1251:iconv "Найти" 
+}
+
+window.findbox = iup.text {
+    size = 'x13', 
+    expand = 'horizontal', 
+    font = "Courier, 10"
+}
+
+window.regexp = iup.toggle{title = 'RegExp'}
 
 function window:OpenFile(filename)
     local list = cf_inside.ReadModulesFromFile(filename)
@@ -115,10 +135,59 @@ function window.button_store:action()
     end
 end
 
+function window.button_find:action()
+    if window.findbox.value == '' then return end
+    
+    local text      = window.text
+    local selection = text.selection
+    local findbox   = window.findbox
+    local regexp    = window.regexp
+
+    local start = window.caretpos
+    if selection and (regexp.value == 'ON') then
+        if findbox.value:find('%b', 1, true) then
+            start = start - #text.selectedtext + 2
+        else
+            start = start + 1
+        end
+    end
+    local b, e = text.value:find(findbox.value, start, regexp.value == 'OFF')
+    if b then
+        window.caretpos = e
+        text.caretpos   = e
+        text.selectionpos = (b - 1)..':'..e
+        text.scrollto = text.selection:sub(1, text.selection:find(',', 1, true))
+        iup.SetFocus(text)
+    else
+        dlg = iup.messagedlg {
+            dialogtype = 'question',
+            buttons = 'yesno',
+            title = utf8_to_cp1251:iconv "Вхождения не найдены",
+            value = utf8_to_cp1251:iconv "Искать сначала?"
+        }
+        dlg:popup()
+        local buttonresponse = dlg.buttonresponse
+        dlg:destroy() 
+        if buttonresponse == '1' then
+            window.caretpos = 1
+            text.caretpos   = 1
+            self:action()
+        end
+    end
+end
+
 window.vbox = iup.vbox {
-    iup.hbox {
-        window.button_open,
-        window.button_store
+    iup.split {
+        iup.hbox {
+            window.button_open,
+            window.button_store
+        },
+        iup.hbox {
+            window.regexp,
+            window.findbox,
+            window.button_find,
+            alignment  = 'acenter', 
+        }
     },
     iup.split {
         -- elements
@@ -134,22 +203,47 @@ window.vbox = iup.vbox {
 window.main = iup.dialog {
     window.vbox,
     title = "cf viewer",
-    defaultenter = window.button_open,
     size = "HALFxHALF", shrink="yes",
-    -- PLACEMENT = 'MAXIMIZED',
+    -- placement = 'maximized',
 }
 
 function window.main:k_any(c)
     if c == iup.K_ESC then
         self:hide()
     elseif c == iup.K_cCR then
-        self.PLACEMENT = 'MAXIMIZED'
+        self.placement = 'maximized'
         iup.Show(self)
+    elseif c == iup.K_cO then
+        window.button_open:action()
     elseif c == iup.K_cS then
         window.button_store:action()
-    elseif c == iup.K_cG then
-        window:GotoLine()
+    elseif c == iup.K_cF then
+        window.regexp.value = 'off'
+        iup.SetFocus(window.findbox)
+    elseif c == iup.K_cR then
+        window.regexp.value = 'on'
+        iup.SetFocus(window.findbox)
+    elseif c == iup.K_F2 then
+        iup.SetFocus(window.list)
     end
+    return iup.default
+end
+
+function window.findbox:k_any(c)
+    if (c == iup.K_CR) then
+        window.button_find:action()
+    end
+    window.main:k_any(c)
+    return iup.default
+end
+
+function window.text:k_any(c)
+    if c == iup.K_cG then
+        window:GotoLine()
+    elseif c == iup.K_F3 then
+        window.button_find:action()
+    end
+    window.main:k_any(c)
     return iup.default
 end
 
