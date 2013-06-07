@@ -1,19 +1,7 @@
-local ffi = require("ffi")
+local common = require 'common'
 local lfs = require "lfs"
-ffi.cdef [[
-void free(void *ptr);
-]]
-
-require 'miniz_h'
-local miniz = ffi.load("miniz")
-
+local lmz = require 'lmz'
 local cf = require 'cf_tools.cf_reader'
-
-local function inflate(source)
-    local decomp_len = ffi.new 'size_t[1]'
-    local pdata = ffi.gc(miniz.tinfl_decompress_mem_to_heap(source, #source, decomp_len, 0), ffi.C.free)
-    return pdata ~= ffi.NULL, ffi.string(pdata, ffi.cast("int", decomp_len[0])) 
-end
 
 local SIG = string.char( 0xFF, 0xFF, 0xFF, 0x7F )
 
@@ -26,12 +14,12 @@ end
 local function UnpackTo(path, rd)
 
     local Image = cf.ReadImage(rd)
-    local ret, res, dir
+    local res, dir
 
     for ID, Body, Packed in Image.Rows() do
         if Packed then
-            ret, res = inflate(Body)
-            assert(ret, 'inflate error')
+            res = lmz.inflate(Body)
+            assert(res, 'inflate error')
             if res:sub(1, 4) == SIG then
                 dir = path .. ID .. "/"
                 lfs.mkdir(dir)
@@ -46,8 +34,17 @@ local function UnpackTo(path, rd)
 
 end
 
-local file = assert(io.open(arg[1] or "c:/1C/1Cv8.cf", "rb"))
-local dir = arg[2] or "c:/1C/1Cv8_cf/"
-dir = dir:sub(-1) == '/' and dir or dir..'/'
-lfs.mkdir(dir)
-UnpackTo(dir, cf.NewFileReader(file))
+local file = arg[1] and assert(io.open(arg[1], "rb"))
+local dir = arg[2]
+
+if file then
+    if dir then
+        dir = dir:sub(-1) == '/' and dir or dir..'/'
+        lfs.mkdir(dir)
+    else
+        dir = common.parse_path(arg[1])
+    end
+    UnpackTo(dir, cf.NewFileReader(file))
+else
+    print 'Usage: cf_unpack.lua myfile.cf [mydir]'
+end

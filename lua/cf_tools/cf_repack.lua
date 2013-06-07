@@ -1,82 +1,53 @@
-local ffi = require("ffi")
-ffi.cdef [[
-void free(void *ptr);
-]]
-
-require 'miniz_h'
-local miniz = ffi.load("miniz")
-
-local cf = require 'cf_tools.cf_reader'
-
-local function inflate(source)
-    local decomp_len = ffi.new 'size_t[1]'
-    local pdata = ffi.gc(miniz.tinfl_decompress_mem_to_heap(source, #source, decomp_len, 0), ffi.C.free)
-    return pdata ~= ffi.NULL, ffi.string(pdata, ffi.cast("int", decomp_len[0])) 
-end
-
-local function NewZipWriter(fpath)
-    
-    local zip = ffi.new 'mz_zip_archive'
-    zip.m_file_offset_alignment = 0
-    if miniz.mz_zip_writer_init_file(zip, fpath, 0) == miniz.MZ_FALSE then
-        return nil
-    end
-
-    function write(dpath, data, level)
-        if miniz.mz_zip_writer_add_mem(zip, dpath, data, #data, level) == miniz.MZ_FALSE then
-            mz_zip_writer_end(zip)
-            os.remove(fpath)
-            return false
-        end
-        return true
-    end
-
-    function finalize()
-        if miniz.mz_zip_writer_finalize_archive(zip) == miniz.MZ_FALSE then
-            miniz.mz_zip_writer_end(zip)
-            os.remove(fpath)
-            return false
-        end  
-        miniz.mz_zip_writer_end(zip)  
-        return true
-    end
-
-    return {
-        write = write,
-        finalize = finalize
-    }
-
-end
+local common = require 'common'
+local lmz = require 'lmz'
+local cf  = require 'cf_tools.cf_reader'
 
 local SIG = string.char( 0xFF, 0xFF, 0xFF, 0x7F )
+
+local level = {
+    NO_COMPRESSION      =  0, 
+    BEST_SPEED          =  1,
+    BEST_COMPRESSION    =  9, 
+    UBER_COMPRESSION    = 10, 
+    DEFAULT_LEVEL       =  6, 
+    DEFAULT_COMPRESSION = -1 
+}
 
 local function UnpackTo(path, rd, zip)
     
     local Image = cf.ReadImage(rd)
-    local ret, res
+    local res
 
     for ID, Body, Packed in Image.Rows() do
         if Packed then
-            ret, res = inflate(Body)
-            if ret then
+            res = lmz.inflate(Body)
+            if res then
                 if res:sub(1, 4) == SIG then
-                    UnpackTo(ID .. "/", cf.NewStringReader(res), zip)
+                    UnpackTo(ID .. '/', cf.NewStringReader(res), zip)
                 else
-                    assert(zip.write(path .. ID, res, 1))
+                    assert(zip:write(path .. ID, res, level.BEST_SPEED))
                 end
             else
-                print("inflate error", ID)
+                print('inflate error', ID)
             end
+            -- only for luajit
+            -- force the garbage collector
+            collectgarbage('step')
         else
-            assert(zip.write(path .. ID, Body, 1))
+            assert(zip:write(path .. ID, Body, level.BEST_SPEED))
         end
     end
 
 end
 
+local file = arg[1] and assert(io.open(arg[1], 'rb'))
 
-local file = assert(io.open(arg[1] or "c:/1C/1Cv8.cf", "rb"))
-local zip  = assert(NewZipWriter(arg[2] or "c:/1C/1Cv8.zip"))
-UnpackTo("", cf.NewFileReader(file), zip)
-zip.finalize()
+if file then
+    local fdir, fnam, fext = common.parse_path(arg[1])
+    local zip = assert(lmz.new_zip_writer(arg[2] or fdir..fnam..'zip'))
+    UnpackTo('', cf.NewFileReader(file), zip)
+    assert(zip:finalize())
+else
+    print 'Usage: cf_repack.lua myfile.cf [myfile.zip]'
+end
 

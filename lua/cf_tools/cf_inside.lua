@@ -1,33 +1,10 @@
-local ffi = require("ffi")
-ffi.cdef [[
-void free(void *ptr);
-]]
-
-require 'miniz_h'
-local miniz = ffi.load("miniz")
-
+local common = require 'common'
+local lmz = require 'lmz'
 local cf = require 'cf_tools.cf_reader'
-
-local function inflate(source)
-    local decomp_len = ffi.new 'size_t[1]'
-    local pdata = ffi.gc(miniz.tinfl_decompress_mem_to_heap(source, #source, decomp_len, 0), ffi.C.free)
-    return pdata ~= ffi.NULL, ffi.string(pdata, ffi.cast("int", decomp_len[0])) 
-end
-
-local function parse_path(path)
-    -- dir, filename, ext
-    return string.match(path, "(.-)([^\\/]-)%.?([^%.\\/]*)$")
-end
-
-function NewSet(list)
-    local set = {}
-    for _, v in ipairs(list) do set[v] = true end
-    return set
-end
 
 local SIG = string.char( 0xFF, 0xFF, 0xFF, 0x7F )
 local BOM = string.char( 0xEF, 0xBB, 0xBF )
-local tform = NewSet {
+local tform = common.new_set {
     'd5b0e5ed-256d-401c-9c36-f630cafd8a62', -- форма обработки
     'a3b368c0-29e2-11d6-a3c7-0050bae0a776'  -- форма отчета
 }
@@ -36,9 +13,9 @@ local dir = {}
 
 local function ReadModulesFromFile(path)
     
-    local check = NewSet {"epf", "erf"}
+    local check = common.new_set {"epf", "erf"}
 
-    local fdir, fnam, fext = parse_path(path)
+    local fdir, fnam, fext = common.parse_path(path)
     assert(check[fext:lower()])
      
     local modules = {}
@@ -51,11 +28,11 @@ local function ReadModulesFromFile(path)
     end
 
     local Image = cf.ReadImage(cf.NewFileReader(assert(io.open(path, "rb"))))
-    local ret, res
+    local res
     for ID, Body, Packed in Image.Rows() do           
         if Packed then
-            ret, res = inflate(Body)
-            assert(ret, 'inflate error')
+            res = lmz.inflate(Body)
+            assert(res, 'inflate error')
             if res:sub(1, 4) == SIG then
                 Image = cf.ReadImage(cf.NewStringReader(res))
                 local subdir = {}

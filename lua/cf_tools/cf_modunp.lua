@@ -1,9 +1,6 @@
-local ffi = require("ffi")
-
+local common = require 'common'
 local iconv = require 'iconv'
-
-local lfs = require "lfs"
-
+local lfs = require 'lfs'
 local cf_inside = require 'cf_tools.cf_inside'
 
 local function write(path, data)
@@ -14,7 +11,14 @@ end
 
 local src, dst = arg[1], arg[2]
 
-if src and dst then
+if src then
+
+    local srcdir, srcname = common.parse_path(src)
+    dst = dst or srcdir
+
+    if dst == '' then
+        dst = lfs.currentdir()
+    end
 
     local dir = dst:sub(-1) == '/' and dst or dst..'/'
     lfs.mkdir(dir)
@@ -24,7 +28,7 @@ if src and dst then
     local list = cf_inside.ReadModulesFromFile(src)
     local fname
     for _, item in ipairs(list) do
-        fname = utf8_to_cp1251:iconv(item.mod_type == 'object' and 'МодульОбъекта' or item.mod_name)
+        fname = srcname..'_'..utf8_to_cp1251:iconv(item.mod_type == 'object' and 'Модуль' or item.mod_name)
         write(dir..fname..'.txt', item.mod_text)
     end
 

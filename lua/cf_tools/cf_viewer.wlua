@@ -3,17 +3,23 @@ local lfs = require 'lfs'
 local cf_inside = require 'cf_tools.cf_inside'
 require 'iuplua'
 
-local utf8_to_cp1251 = iconv.new('CP1251', 'UTF-8')
+local function NewConverter(ic)
+    return function(s)
+        return ic:iconv(s)
+    end
+end
+
+local utf8_to_cp1251 = NewConverter(iconv.new('CP1251', 'UTF-8'))
 
 local function write(path, data)
-    local file = assert(io.open(path, "wb"))
+    local file = assert(io.open(path, 'wb'))
     file:write(data)
     file:close()
 end
 
 local window = {}
 
-window.list = iup.list {expand="yes", visiblelines = 3}
+window.list = iup.list {expand = 'yes', visiblelines = 3}
 
 window.modules = {}
 
@@ -26,9 +32,9 @@ function window.list:action(t, i, v)
 end
 
 window.text = iup.multiline {
-    readonly = "yes",
-    expand   = "yes",
-    font     = "Courier, 10",
+    -- readonly = 'yes',
+    expand   = 'yes',
+    font     = 'Courier, 10',
     tabsize  = 4,
     padding  = '10x0', -- formatting = 'yes'
 }
@@ -40,24 +46,24 @@ function window.text:caret_cb(lin, col, pos)
 end
 
 window.button_open = iup.button {
-    size = "60x13",
-    title = utf8_to_cp1251:iconv "Открыть"
+    size = '60x13',
+    title = utf8_to_cp1251 'Открыть'
 }
 
 window.button_store = iup.button {
-    size = "70x13",
-    title = utf8_to_cp1251:iconv "Сохранить как" 
+    size = '70x13',
+    title = utf8_to_cp1251 'Сохранить как' 
 }
 
 window.button_find = iup.button {
-    size = "40x13",
-    title = utf8_to_cp1251:iconv "Найти" 
+    size = '40x13',
+    title = utf8_to_cp1251 'Найти' 
 }
 
 window.findbox = iup.text {
     size = 'x13', 
     expand = 'horizontal', 
-    font = "Courier, 10"
+    font = 'Courier, 10'
 }
 
 window.regexp = iup.toggle{title = 'RegExp'}
@@ -68,9 +74,9 @@ function window:OpenFile(filename)
     self.modules = {}
     self.list[1] = nil
     for i, v in ipairs(list) do
-        mod_name = utf8_to_cp1251:iconv(v.mod_type == 'object' and 'МодульОбъекта' or v.mod_name)
+        mod_name = utf8_to_cp1251(v.mod_type == 'object' and 'МодульОбъекта' or v.mod_name)
         self.list[i] = mod_name    
-        self.modules[i] = utf8_to_cp1251:iconv(v.mod_text:sub(4))
+        self.modules[i] = utf8_to_cp1251(v.mod_text:sub(4))
     end
     self.text.value = self.modules[1]
     self.list.value = 1
@@ -79,8 +85,8 @@ end
 
 function window:GotoLine()
     local ret, line = iup.GetParam(
-        utf8_to_cp1251:iconv "Перейти", nil,
-        utf8_to_cp1251:iconv "Номер строки: %s/d+\n", ''
+        utf8_to_cp1251 'Перейти', nil,
+        utf8_to_cp1251 'Номер строки: %s/d+\n', ''
     )
     if line then
         self.text.scrollto = line..':1'
@@ -91,13 +97,13 @@ end
 
 function window.button_open:action()
     local fd = iup.filedlg {
-        dialogtype  = "open", 
-        title       = utf8_to_cp1251:iconv "Открыть", 
-        nochangedir = "no",
+        dialogtype  = 'open', 
+        title       = utf8_to_cp1251 'Открыть', 
+        nochangedir = 'no',
         directory   = window.last_directory,
-        filter      = "*.epf;*.erf", 
-        filterinfo  = "*.epf;*.erf", 
-        allownew    = "no"
+        filter      = '*.epf;*.erf', 
+        filterinfo  = '*.epf;*.erf', 
+        allownew    = 'no'
     }
     fd:popup(iup.center, iup.center)
     local status = fd.status
@@ -105,9 +111,9 @@ function window.button_open:action()
     window.last_directory = fd.directory
     fd:destroy()
 
-    if (status == "-1") or (status == "1") then
-        if (status == "1") then
-            error ("Cannot load file "..filename)
+    if (status == '-1') or (status == '1') then
+        if (status == '1') then
+            error ('Cannot load file '..filename)
         end
     else
         window:OpenFile(filename)
@@ -116,12 +122,12 @@ end
 
 function window.button_store:action()
     local fd = iup.filedlg {
-        dialogtype  = "save", 
-        title       = utf8_to_cp1251:iconv "Сохранить как", 
-        nochangedir = "no",
+        dialogtype  = 'save', 
+        title       = utf8_to_cp1251 'Сохранить как', 
+        nochangedir = 'no',
         directory   = window.last_directory,
-        extfilter   = "*.txt|*.txt",
-        allownew    = "no",
+        extfilter   = '*.txt|*.txt',
+        allownew    = 'no',
         file        = window.list[window.list.value]..'.txt'
     }
     fd:popup(iup.center, iup.center)
@@ -130,7 +136,7 @@ function window.button_store:action()
     window.last_directory = fd.directory
     fd:destroy()
 
-    if (status == "0") or (status == "1") then
+    if (status == '0') or (status == '1') then
         write(filename, window.text.value:gsub('\n', '\r\n'))
     end
 end
@@ -156,14 +162,14 @@ function window.button_find:action()
         window.caretpos = e
         text.caretpos   = e
         text.selectionpos = (b - 1)..':'..e
-        text.scrollto = text.selection:sub(1, text.selection:find(',', 1, true))
+        text.scrollto = iup.TextConvertPosToLinCol(text, e)
         iup.SetFocus(text)
     else
         dlg = iup.messagedlg {
             dialogtype = 'question',
             buttons = 'yesno',
-            title = utf8_to_cp1251:iconv "Вхождения не найдены",
-            value = utf8_to_cp1251:iconv "Искать сначала?"
+            title = utf8_to_cp1251 'Вхождения не найдены',
+            value = utf8_to_cp1251 'Искать сначала?'
         }
         dlg:popup()
         local buttonresponse = dlg.buttonresponse
@@ -197,13 +203,13 @@ window.vbox = iup.vbox {
         value  = '200',
         minmax = '100:500'
     },   
-    gap="2x2", margin="2x2" 
+    gap='2x2', margin='2x2' 
 }
 
 window.main = iup.dialog {
     window.vbox,
-    title = "cf viewer",
-    size = "HALFxHALF", shrink="yes",
+    title = 'cf viewer',
+    size = 'HALFxHALF', shrink='yes',
     -- placement = 'maximized',
 }
 
@@ -218,10 +224,10 @@ function window.main:k_any(c)
     elseif c == iup.K_cS then
         window.button_store:action()
     elseif c == iup.K_cF then
-        window.regexp.value = 'off'
+        window.regexp.value = 'OFF'
         iup.SetFocus(window.findbox)
     elseif c == iup.K_cR then
-        window.regexp.value = 'on'
+        window.regexp.value = 'ON'
         iup.SetFocus(window.findbox)
     elseif c == iup.K_F2 then
         iup.SetFocus(window.list)
