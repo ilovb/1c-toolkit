@@ -3,7 +3,7 @@
 ----------
 состав версии 0.1.6:
 
-- **cf\_reader.lua** - модуль для чтения [файлов конфигураций 1С](http://www.richmedia.us/post/2011/01/18/cf-file-format-1c-8-compatible.aspx) (cf, epf, erf)
+- **cf\_reader.lua** - модуль для чтения [файлов конфигураций 1С](http://infostart.ru/public/250142/) (cf, epf, erf)
 - **cf\_inside.lua** - модуль для работы с содержимым файлов конфигураций
 - **cf\_modunp.lua** - утилита командной строки для извлечения модулей из обработок и отчетов
 - **cf\_unpack.lua** - утилита командной строки для распаковки файлов конфигураций в указанный каталог
@@ -19,27 +19,3 @@
 - [Клиентский хук для TortoiseSVN](http://infostart.ru/public/181018/)
 - [Альтернативное сравнение конфигураций](http://infostart.ru/public/165529/)
 - [Утилита для просмотра модулей обработок и отчетов](http://infostart.ru/public/183149/)
-
-----------
-файлы для скачивания:
-
-* 1c-toolkit [версия 0.1.6](https://bitbucket.org/boris_coder/1c-toolkit/get/0.1.6.zip)
-	* [1c-toolkit\_v0.1.6\_win\_x86.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.6_win_x86.exe)
-	* [1c-toolkit\_v0.1.6\_win\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/1c-toolkit_v0.1.6_win_x86.zip)
-* компилятор LuaJIT:
-	* [LuaJIT 2.0.1 with Hotfix#1 / win / x86 / built with Windows SDK 8 /  
-	includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x86.zip)
-	* [LuaJIT 2.0.1 with Hotfix#1 / win / x64 / built with Windows SDK 8 /  
-	includes proxy lua5.1.dll and wluajit.exe](https://bitbucket.org/boris_coder/1c-toolkit/downloads/LuaJIT_201_msvc_win_x64.zip)
-* бинарные модули (lfs.dll):
-	* [clibs\_win\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/clibs_win_x86.zip)
-	* [clibs\_win\_x64.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/clibs_win_x64.zip)
-* библиотеки (zlib1.dll, miniz.dll, tinfl.dll, libiconv.dll):
-	* [bin\_win\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/bin_win_x86.zip)
-	* [bin\_win\_x64.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/bin_win_x64.zip)
-* [IUP](http://ru.wikipedia.org/wiki/IUP) (iuplua51.dll, iup.dll)
-	* [iup\_x86.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/iup_x86.zip)
-	* [iup\_x64.zip](https://bitbucket.org/boris_coder/1c-toolkit/downloads/iup_x64.zip)
-* [Распространяемый пакет Visual C++ для Visual Studio 2012](http://www.microsoft.com/ru-ru/download/details.aspx?id=30679)
-
-----------
